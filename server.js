@@ -18,6 +18,14 @@ const books = [
   },
 ];
 
+const movies = [
+  {
+    title: "Harry Potter and the Sorcerer's stone",
+    author: 'J.K. Rowling',
+  },
+];
+
+
 const covers = [
   {
     title: "Harry Potter and the Sorcerer's stone",
@@ -31,9 +39,34 @@ const covers = [
 
 // The GraphQL schema in string form
 const typeDefs = `
-  type Query { books: [Book] }
-  type Cover { image: String }
-  type Book { title: String, author: String, cover: Cover }
+  type Query { 
+    books: [Book]
+    movies: [Movie]
+  }
+
+  type Mutation {
+    addBook(title: String!, author: String!): Book
+  }
+
+  type Book { 
+    title: String
+    author: String
+    cover: Cover
+  }
+
+  type Movie {
+    title: String
+    cover: Cover
+  }
+  
+  type Cover { 
+    image: String 
+  }
+
+  schema {
+    query: Query
+    mutation: Mutation
+  }
 `;
 
 // The resolvers
@@ -41,11 +74,28 @@ const resolvers = {
   Query: { 
     books() {
       return books 
+    },
+    movies() {
+      return movies
+    },
+  },
+  Mutation: {
+    addBook(_, { title }) {
+      const book = { title };
+      
+      books.push(book);
+
+      return book;
     }
   },
   Book: {
     cover({ title }) {
       return find(covers, { title })
+    }
+  },
+  Movie: {
+    cover({ title }) {
+      return find(covers, { title }) 
     }
   },
 };
